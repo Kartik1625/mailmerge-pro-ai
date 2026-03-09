@@ -1,0 +1,5 @@
+{
+  "name": "MailMerge Pro AI",
+  "description": "A high-performance bulk email management tool that allows users to upload Excel files, review and edit recipient data, and simulate automated email campaigns with AI-powered tone analysis.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,48 @@
+type User @table {
+  displayName: String!
+  email: String!
+  createdAt: Timestamp!
+  photoUrl: String
+  lastLoginAt: Timestamp
+}
+
+type Campaign @table {
+  user: User
+  name: String!
+  status: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  scheduledSendAt: Timestamp
+  sentAt: Timestamp
+  totalRecipients: Int
+}
+
+type EmailTemplate @table {
+  user: User
+  name: String!
+  subject: String!
+  body: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+}
+
+type Recipient @table {
+  campaign: Campaign
+  email: String!
+  status: String!
+  createdAt: Timestamp!
+  firstName: String
+  lastName: String
+  customFields: String
+}
+
+type EmailLog @table {
+  campaign: Campaign
+  recipient: Recipient
+  sentAt: Timestamp!
+  status: String!
+  emailAddress: String!
+  openedAt: Timestamp
+  clickedAt: String
+  errorMessage: String
+}

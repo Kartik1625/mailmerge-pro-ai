@@ -1,0 +1,94 @@
+mutation CreateDemoData @transaction @auth(level: USER, insecureReason: "Seed data mutation for development purposes.") {
+  user_insertMany(data: [
+    {
+      id: "b4d7c6e0-e123-4567-890a-1234567890ab",
+      displayName: "Alice Smith",
+      email: "alice@example.com",
+      createdAt: "2023-01-01T10:00:00Z"
+    },
+    {
+      id: "f8c9d0e1-f234-5678-90ab-234567890abc",
+      displayName: "Bob Johnson",
+      email: "bob@example.com",
+      createdAt: "2023-01-02T11:00:00Z"
+    }
+  ])
+  campaign_insertMany(data: [
+    {
+      id: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      userId: "b4d7c6e0-e123-4567-890a-1234567890ab",
+      name: "Welcome Series",
+      status: "ACTIVE",
+      createdAt: "2023-01-03T09:00:00Z",
+      updatedAt: "2023-01-03T09:00:00Z",
+      totalRecipients: 2
+    },
+    {
+      id: "b5c6d7e8-f9a0-1234-5678-90abcdef0123",
+      userId: "f8c9d0e1-f234-5678-90ab-234567890abc",
+      name: "Product Update",
+      status: "PAUSED",
+      createdAt: "2023-01-04T14:30:00Z",
+      updatedAt: "2023-01-04T14:30:00Z",
+      scheduledSendAt: "2023-01-05T10:00:00Z"
+    }
+  ])
+  emailTemplate_insertMany(data: [
+    {
+      id: "c7d8e9f0-a1b2-3456-7890-abcdef012345",
+      userId: "b4d7c6e0-e123-4567-890a-1234567890ab",
+      name: "Welcome Email",
+      subject: "Welcome to our service!",
+      body: "Hello {{firstName}}, welcome to our service!",
+      createdAt: "2023-01-01T10:00:00Z",
+      updatedAt: "2023-01-01T10:00:00Z"
+    },
+    {
+      id: "d9e0f1a2-b3c4-5678-9012-34567890abcd",
+      userId: "f8c9d0e1-f234-5678-90ab-234567890abc",
+      name: "New Feature Announcement",
+      subject: "Exciting new features!",
+      body: "Hi {{firstName}}, check out our latest updates!",
+      createdAt: "2023-01-03T12:00:00Z",
+      updatedAt: "2023-01-03T12:00:00Z"
+    }
+  ])
+  recipient_insertMany(data: [
+    {
+      id: "e1f2a3b4-c5d6-7890-1234-567890abcdef",
+      campaignId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      email: "recipient1@example.com",
+      status: "SUBSCRIBED",
+      createdAt: "2023-01-03T09:00:00Z",
+      firstName: "John",
+      lastName: "Doe"
+    },
+    {
+      id: "f3a4b5c6-d7e8-9012-3456-7890abcdef01",
+      campaignId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      email: "recipient2@example.com",
+      status: "SUBSCRIBED",
+      createdAt: "2023-01-03T09:05:00Z",
+      firstName: "Jane",
+      lastName: "Smith"
+    }
+  ])
+  emailLog_insertMany(data: [
+    {
+      id: "g5h6i7j8-k9l0-1234-5678-90abcdef0123",
+      campaignId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      recipientId: "e1f2a3b4-c5d6-7890-1234-567890abcdef",
+      sentAt: "2023-01-03T09:10:00Z",
+      status: "SENT",
+      emailAddress: "recipient1@example.com"
+    },
+    {
+      id: "h7i8j9k0-l1m2-3456-7890-abcdef012345",
+      campaignId: "a1b2c3d4-e5f6-7890-1234-567890abcdef",
+      recipientId: "f3a4b5c6-d7e8-9012-3456-7890abcdef01",
+      sentAt: "2023-01-03T09:12:00Z",
+      status: "DELIVERED",
+      emailAddress: "recipient2@example.com"
+    }
+  ])
+}

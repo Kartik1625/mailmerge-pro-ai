@@ -1,0 +1,41 @@
+query ListMyCampaigns @auth(level: USER, insecureReason: "This operation is safe to expose to all logged in users.") {
+  campaigns(where: { user: { id_expr: "auth.uid" } }) {
+    id
+    name
+    status
+    createdAt
+    scheduledSendAt
+    totalRecipients
+  }
+}
+
+mutation CreateEmailTemplate($name: String!, $subject: String!, $body: String!) @auth(level: USER) {
+  emailTemplate_insert(
+    data: {
+      userId_expr: "auth.uid"
+      name: $name
+      subject: $subject
+      body: $body
+      createdAt_expr: "request.time"
+      updatedAt_expr: "request.time"
+    }
+  )
+}
+
+query GetPublicEmailTemplates @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public") {
+  emailTemplates {
+    id
+    name
+    subject
+    body
+  }
+}
+
+mutation RecordEmailSentStatus($emailLogId: UUID!, $newStatus: String!) @auth(level: USER) {
+  emailLog_update(
+    id: $emailLogId,
+    data: {
+      status: $newStatus
+    }
+  )
+}
