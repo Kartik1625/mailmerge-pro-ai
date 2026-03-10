@@ -41,6 +41,12 @@ export const StepSending: React.FC<StepSendingProps> = ({ data, fromEmail, onFin
           }),
         });
 
+        if (response.status === 401) {
+          alert("Your Google connection expired or is invalid. Please sign out and sign in again. (Google Access Tokens expire after 1 hour)");
+          setTimeout(() => onFinish(currentResults), 500);
+          return;
+        }
+
         const result = await response.json();
 
         setCurrentResults(prev => {

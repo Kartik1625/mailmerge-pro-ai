@@ -70,7 +70,7 @@ export const StepReport: React.FC<StepReportProps> = ({ results, onReset }) => {
         <div className="bg-white p-8 rounded-2xl shadow-sm border border-zinc-100">
           <h3 className="font-bold text-zinc-900 mb-6 uppercase text-xs tracking-widest">Delivery Status Distribution</h3>
           <div className="h-[250px] w-full min-h-[250px]">
-            <ResponsiveContainer width="100%" height={250}>
+            <ResponsiveContainer width="100%" height={250} minWidth={1}>
               <PieChart>
                 <Pie
                   data={pieData}

@@ -66,7 +66,8 @@ def send_email():
     except Exception as e:
         import traceback
         traceback.print_exc()
-        if "google.auth.exceptions.RefreshError" in str(type(e)):
+        error_msg = str(e).lower()
+        if "google.auth.exceptions.refresherror" in str(type(e)).lower() or "401" in error_msg:
              return jsonify({"status": "error", "message": "Your Google connection expired or is invalid. Please sign out and sign in again."}), 401
         return jsonify({"status": "error", "message": "Could not send email: " + str(e)}), 500
 
