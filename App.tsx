@@ -18,6 +18,7 @@ const App: React.FC = () => {
 
   const [step, setStep] = useState<AppStep>('setup');
   const [fromEmail, setFromEmail] = useState('');
+  const [appPassword, setAppPassword] = useState('');
   const [records, setRecords] = useState<EmailRecord[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -62,8 +63,9 @@ const App: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
 
-  const handleSetupContinue = (email: string, file: File) => {
+  const handleSetupContinue = (email: string, appPwd: string, file: File) => {
     setFromEmail(email);
+    setAppPassword(appPwd);
     parseExcel(file);
   };
 
@@ -84,6 +86,7 @@ const App: React.FC = () => {
     setStep('setup');
     setRecords([]);
     setFromEmail('');
+    setAppPassword('');
   };
 
   if (loadingAuth) {
@@ -141,7 +144,7 @@ const App: React.FC = () => {
 
       {step === 'setup' && <StepSetup userEmail={user?.email || ''} onContinue={handleSetupContinue} />}
       {step === 'review' && <StepReview data={records} onUpdate={handleUpdateRecords} onConfirm={handleConfirmSend} isAnalyzing={isAnalyzing} />}
-      {step === 'sending' && <StepSending data={records} fromEmail={fromEmail} onFinish={handleSendingFinish} />}
+      {step === 'sending' && <StepSending data={records} fromEmail={fromEmail} appPassword={appPassword} onFinish={handleSendingFinish} />}
       {step === 'report' && <StepReport results={records} onReset={handleReset} />}
     </Layout>
   );

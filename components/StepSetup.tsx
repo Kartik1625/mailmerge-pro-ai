@@ -5,11 +5,12 @@ declare var XLSX: any;
 
 interface StepSetupProps {
   userEmail: string;
-  onContinue: (fromEmail: string, file: File) => void;
+  onContinue: (fromEmail: string, appPassword: string, file: File) => void;
 }
 
 export const StepSetup: React.FC<StepSetupProps> = ({ userEmail, onContinue }) => {
   const [fromEmail, setFromEmail] = useState(userEmail);
+  const [appPassword, setAppPassword] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -54,16 +55,25 @@ export const StepSetup: React.FC<StepSetupProps> = ({ userEmail, onContinue }) =
         <div className="bg-white rounded-2xl shadow-xl shadow-zinc-200/50 p-8 border border-zinc-100">
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-zinc-700 mb-2">From Email Address</label>
+              <label className="block text-sm font-semibold text-zinc-700 mb-2">Sender Gmail</label>
               <input
                 type="email"
+                placeholder="Sender Gmail"
                 value={fromEmail}
-                readOnly
-                className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:outline-none text-zinc-500 cursor-not-allowed"
+                onChange={(e) => setFromEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-violet-200 text-zinc-700"
               />
-              <p className="text-xs text-zinc-400 mt-2 italic">
-                Sending as the currently authenticated Google account.
-              </p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-zinc-700 mb-2">Gmail App Password</label>
+              <input
+                type="password"
+                placeholder="Gmail App Password"
+                value={appPassword}
+                onChange={(e) => setAppPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-violet-200 text-zinc-700"
+              />
             </div>
 
 
@@ -99,7 +109,7 @@ export const StepSetup: React.FC<StepSetupProps> = ({ userEmail, onContinue }) =
 
             <button
               disabled={!isValid}
-              onClick={() => isValid && onContinue(fromEmail, file as File)}
+              onClick={() => isValid && onContinue(fromEmail, appPassword, file as File)}
               className={`w-full py-4 rounded-xl font-bold transition-all ${isValid
                 ? 'bg-violet-600 text-white shadow-lg shadow-violet-200 hover:bg-violet-700'
                 : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
