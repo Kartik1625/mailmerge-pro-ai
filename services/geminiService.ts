@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyBBeOTOyRV_DNT5NIgpJFnwBZwWtapol9U" });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || "AIzaSyBUNeSCIElWow6Suj_g2OQBeySFOCVpDhc" });
 
 export const analyzeEmailTones = async (emails: { subject: string; message: string }[]) => {
   try {
