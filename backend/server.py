@@ -38,29 +38,45 @@ def upload_excel():
 def send_email():
     data = request.json
     
-    sender_email = data.get("sender_email") or DEFAULT_SENDER_EMAIL
+    sender_email = data.get("senderEmail")
+    app_password = data.get("appPassword")
     access_token = data.get("access_token")
     recipient = data.get("recipient")
     subject = data.get("subject")
     message = data.get("message")
 
-    if not all([sender_email, access_token, recipient, subject, message]):
-        return jsonify({"status": "error", "message": "Missing required fields or credentials"}), 400
+    if not sender_email or not recipient or not subject or not message:
+        return jsonify({"status": "error", "message": "Missing required fields"}), 400
+
+    if not access_token and not app_password:
+        return jsonify({"status": "error", "message": "Missing credentials (need access token or app password)"}), 400
 
     try:
-        creds = Credentials(access_token)
-        service = build('gmail', 'v1', credentials=creds)
+        if app_password:
+            import smtplib
+            msg = EmailMessage()
+            msg.set_content(message)
+            msg["From"] = sender_email
+            msg["To"] = recipient
+            msg["Subject"] = subject
+            
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server_smtp:
+                server_smtp.login(sender_email, app_password)
+                server_smtp.send_message(msg)
+        else:
+            creds = Credentials(access_token)
+            service = build('gmail', 'v1', credentials=creds)
 
-        msg = EmailMessage()
-        msg.set_content(message)
-        msg["From"] = sender_email
-        msg["To"] = recipient
-        msg["Subject"] = subject
-        
-        encoded_message = base64.urlsafe_b64encode(msg.as_bytes()).decode()
-        create_message = {'raw': encoded_message}
+            msg = EmailMessage()
+            msg.set_content(message)
+            msg["From"] = sender_email
+            msg["To"] = recipient
+            msg["Subject"] = subject
+            
+            encoded_message = base64.urlsafe_b64encode(msg.as_bytes()).decode()
+            create_message = {'raw': encoded_message}
 
-        service.users().messages().send(userId="me", body=create_message).execute()
+            service.users().messages().send(userId="me", body=create_message).execute()
 
         return jsonify({"status": "success", "message": "Email sent successfully"})
     except Exception as e:
