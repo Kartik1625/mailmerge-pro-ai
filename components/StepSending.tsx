@@ -4,16 +4,22 @@ import { EmailRecord } from '../types';
 interface StepSendingProps {
   data: EmailRecord[];
   fromEmail: string;
+  appPassword?: string;
 
   onFinish: (results: EmailRecord[]) => void;
 }
 
-export const StepSending: React.FC<StepSendingProps> = ({ data, fromEmail, onFinish }) => {
+export const StepSending: React.FC<StepSendingProps> = ({ data, fromEmail, appPassword: propsAppPassword, onFinish }) => {
   const [currentResults, setCurrentResults] = useState<EmailRecord[]>([...data]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [senderEmail, setSenderEmail] = useState(fromEmail || "");
+  const [appPassword, setAppPassword] = useState(propsAppPassword || "");
+  const [hasStarted, setHasStarted] = useState(false);
   const processingRef = useRef(false);
 
   useEffect(() => {
+    if (!hasStarted) return;
+
     const processQueue = async () => {
       if (currentIndex >= data.length) {
         setTimeout(() => onFinish(currentResults), 1000);
@@ -25,7 +31,7 @@ export const StepSending: React.FC<StepSendingProps> = ({ data, fromEmail, onFin
 
       const record = currentResults[currentIndex];
 
-      const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+      const backendUrl = "https://mailmerge-pro-ai.onrender.com";
       try {
         const response = await fetch(`${backendUrl}/send-email`, {
           method: 'POST',
@@ -33,7 +39,8 @@ export const StepSending: React.FC<StepSendingProps> = ({ data, fromEmail, onFin
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            sender_email: fromEmail,
+            senderEmail: senderEmail,
+            appPassword: appPassword,
             access_token: localStorage.getItem('google_access_token'),
             recipient: record.recipient,
             subject: record.subject,
@@ -73,9 +80,49 @@ export const StepSending: React.FC<StepSendingProps> = ({ data, fromEmail, onFin
 
     const timer = setTimeout(processQueue, 1000); // Add a small delay between requests to be safe
     return () => clearTimeout(timer);
-  }, [currentIndex, data.length, fromEmail, onFinish]); // Removed currentResults from dep array to avoid loops, used functional update instead
+  }, [currentIndex, data.length, senderEmail, appPassword, onFinish, hasStarted]);
 
   const progress = Math.round((currentIndex / data.length) * 100);
+
+  if (!hasStarted) {
+    return (
+      <div className="max-w-2xl mx-auto py-12">
+        <div className="bg-white rounded-2xl shadow-xl shadow-zinc-200/50 p-8 border border-zinc-100">
+          <h2 className="text-2xl font-bold text-zinc-900 mb-6">Final Email Configuration</h2>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-semibold text-zinc-700 mb-2">Sender Gmail</label>
+              <input
+                type="email"
+                placeholder="Enter your Gmail"
+                value={senderEmail}
+                onChange={(e) => setSenderEmail(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-violet-200 text-zinc-700"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-zinc-700 mb-2">Gmail App Password</label>
+              <input
+                type="password"
+                placeholder="Enter Gmail App Password"
+                value={appPassword}
+                onChange={(e) => setAppPassword(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-violet-200 text-zinc-700"
+              />
+            </div>
+
+            <button
+              onClick={() => setHasStarted(true)}
+              className="w-full py-4 mt-6 bg-violet-600 text-white rounded-xl font-bold shadow-lg shadow-violet-200 hover:bg-violet-700 transition-all text-lg"
+            >
+              Send Emails
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-3xl mx-auto py-12 text-center">
