@@ -6,7 +6,7 @@ const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_GEMINI_API_KEY || "AIz
 export const analyzeEmailTones = async (emails: { subject: string; message: string }[]) => {
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash-latest",
+      model: "gemini-2.5-flash",
       contents: `Analyze the tone and professional quality of these ${emails.length} emails. Return a JSON array of objects with an 'id' (index), 'score' (0-100), and a short 'suggestion' (max 10 words). Emails: ${JSON.stringify(emails)}`,
       config: {
         responseMimeType: "application/json",
